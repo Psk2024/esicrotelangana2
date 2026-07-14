@@ -769,7 +769,8 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 .unit-card-all {
-  grid-column: 1 / -1; /* Forces this card to span across all grid columns on the first line */
+  grid-column: 1 / -1;       /* Spans across all columns */
+  justify-content: center;   /* Centers the icon and text horizontally */
   border: 2px dashed var(--primary);
   background: linear-gradient(180deg, #fbfcfe, #ffffff);
 }
