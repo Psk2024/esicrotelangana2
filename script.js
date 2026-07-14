@@ -305,32 +305,55 @@ function showEmployeeModal(index) {
   if (!e) return;
 
   const imageUrl = e[0] ? `images/${e[0]}.jpg` : "images/default.png";
+  const contact = e[12] || "";
+  const contactHtml = contact
+    ? (contact.includes("@") ? `<a href="mailto:${contact}">${contact}</a>` : contact)
+    : "-";
 
   modalBody.innerHTML = `
     <div class="emp-modal-header">
-      <h3>${e[1] || "-"}</h3>
+      <div class="emp-modal-title">
+        <h3>${e[1] || "-"}</h3>
+        ${e[3] ? `<span class="emp-group-badge">${e[3]}</span>` : ""}
+      </div>
       <p>${e[2] || "-"}</p>
     </div>
 
     <div class="emp-modal-body">
-      <div class="emp-photo">
-        <img src="${imageUrl}" onerror="this.src='images/default.png'">
+      <div class="emp-photo-col">
+        <div class="emp-photo">
+          <img src="${imageUrl}" onerror="this.src='images/default.png'">
+        </div>
+        <div class="emp-id-chip">ID ${e[0] || "-"}</div>
       </div>
 
       <div class="emp-details">
-        <div class="detail-grid">
-          <div class="label">Employee ID</div><div class="value">${e[0] || "-"}</div>
-          <div class="label">Branch</div><div class="value">${e[4] || "-"}</div>
-          <div class="label">Accounting Unit</div><div class="value">${e[5] || "-"}</div>
-          <div class="label">Group</div><div class="value">${e[3] || "-"}</div>
-          <div class="label">Gender</div><div class="value">${e[6] || "-"}</div>
-          <div class="label">Date of Birth</div><div class="value">${e[7] || "-"}</div>
-          <div class="label">Date of Joining (Branch)</div><div class="value">${e[9] || "-"}</div>
-          <div class="label">Date of Joining (Accounting Unit)</div><div class="value">${e[10] || "-"}</div>
-          <div class="label">Date of Joining (ESIC)</div><div class="value">${e[11] || "-"}</div>
-          <div class="label">Date of Promotion of Current Post</div><div class="value">${e[13] || "-"}</div>
-          <div class="label">Date of Retirement</div><div class="value">${e[8] || "-"}</div>
-          <div class="label">Contact Details</div><div class="value">${e[12] ? (e[12].includes("@") ? `<a href="mailto:${e[12]}">${e[12]}</a>` : e[12]) : "-"}</div>
+        <div class="detail-section">
+          <div class="detail-section-title">Posting</div>
+          <div class="detail-grid">
+            <div class="label">Branch</div><div class="value">${e[4] || "-"}</div>
+            <div class="label">Accounting Unit</div><div class="value">${e[5] || "-"}</div>
+            <div class="label">Gender</div><div class="value">${e[6] || "-"}</div>
+            <div class="label">Date of Birth</div><div class="value">${e[7] || "-"}</div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Service Record</div>
+          <div class="detail-grid">
+            <div class="label">Date of Joining (Branch)</div><div class="value">${e[9] || "-"}</div>
+            <div class="label">Date of Joining (Accounting Unit)</div><div class="value">${e[10] || "-"}</div>
+            <div class="label">Date of Joining (ESIC)</div><div class="value">${e[11] || "-"}</div>
+            <div class="label">Date of Promotion of Current Post</div><div class="value">${e[13] || "-"}</div>
+            <div class="label">Date of Retirement</div><div class="value">${e[8] || "-"}</div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Contact</div>
+          <div class="detail-grid">
+            <div class="label">Contact Details</div><div class="value">${contactHtml}</div>
+          </div>
         </div>
       </div>
     </div>

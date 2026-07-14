@@ -285,54 +285,77 @@ input:focus {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.75);
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(2px);
   z-index: 1000;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .modal-content {
   background: #fff;
-  max-width: 680px;
-  margin: auto;
-  padding: 26px;
+  max-width: 640px;
+  margin: 30px auto;
+  padding: 28px;
   border-radius: 22px;
   position: relative;
-  box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
 }
 
 .close-btn {
   position: absolute;
   top: 14px;
   right: 14px;
-  width: 38px;
-  height: 38px;
-  font-size: 26px;
+  width: 36px;
+  height: 36px;
+  font-size: 22px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  color: var(--text-muted);
+  transition: background .15s ease, color .15s ease;
 }
 
 .close-btn:hover {
-  background: #f1f5f9;
-  color: red;
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 /* ================= MODAL CONTENT ================= */
 .emp-modal-header {
   border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 10px;
-  margin-bottom: 18px;
+  padding: 0 40px 14px 0;
+  margin-bottom: 20px;
+}
+
+.emp-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .emp-modal-header h3 {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 900;
   background: linear-gradient(90deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.emp-group-badge {
+  flex-shrink: 0;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--secondary);
+  font-size: .68rem;
+  font-weight: 800;
+  padding: 4px 11px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
 }
 
 .emp-modal-header p {
@@ -344,16 +367,25 @@ input:focus {
 
 .emp-modal-body {
   display: flex;
-  gap: 24px;
-  align-items: stretch;
+  gap: 26px;
+  align-items: flex-start;
+}
+
+.emp-photo-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .emp-photo {
-  width: 150px;
-  border-radius: 18px;
+  width: 140px;
+  height: 160px;
+  border-radius: 16px;
   overflow: hidden;
   background: #eef3ff;
-  box-shadow: 0 12px 26px rgba(0,0,0,0.25);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.2);
 }
 
 .emp-photo img {
@@ -362,27 +394,72 @@ input:focus {
   object-fit: cover;
 }
 
+.emp-id-chip {
+  background: #eef3ff;
+  color: var(--primary);
+  font-weight: 800;
+  font-size: .75rem;
+  letter-spacing: .02em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 .emp-details {
   flex: 1;
+  min-width: 0;
+}
+
+.detail-section {
+  margin-bottom: 18px;
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-section-title {
+  font-size: .7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--secondary);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eef2f7;
 }
 
 .detail-grid {
   display: grid;
-  grid-template-columns: 170px 1fr;
-  row-gap: 12px;
-  column-gap: 18px;
+  grid-template-columns: 150px 1fr;
+  row-gap: 10px;
+  column-gap: 14px;
 }
 
 .label {
-  font-size: .75rem;
+  font-size: .72rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
+  align-self: start;
+  padding-top: 1px;
 }
 
 .value {
-  font-size: .95rem;
+  font-size: .92rem;
   font-weight: 600;
+  color: #1e293b;
+  word-break: break-word;
+}
+
+.value a {
+  color: var(--secondary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.value a:hover {
+  text-decoration: underline;
 }
 
 /* ================= HOME PAGE ================= */
@@ -601,15 +678,25 @@ input:focus {
 
   .emp-modal-body {
     flex-direction: column;
+    align-items: center;
+  }
+
+  .emp-photo-col {
+    width: 100%;
   }
 
   .emp-photo {
+    width: 130px;
+    height: 150px;
+    margin: 0 auto;
+  }
+
+  .emp-details {
     width: 100%;
-    height: 180px;
   }
 
   .detail-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 130px 1fr;
   }
 
   .branch-summary-total {
