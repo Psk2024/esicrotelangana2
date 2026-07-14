@@ -1,7 +1,7 @@
 /* ================= CONFIG ================= */
 const apiKey = "AIzaSyBLOOYaN0zUBPUkA0FyPot1QL-LFWCpEzc";
 const spreadsheetId = "1a4JmwnRPvVHOh5BNOZ-F_sqspasdcowRB7uF-qScd48";
-const employeeRange = "Employees2!A1:M";
+const employeeRange = "Employees2!A1:N";
 
 const unitColors = [
   "Tomato",
@@ -38,19 +38,20 @@ async function fetchUnits() {
 
     const unitMap = new Map(); // accounting unit -> Set of employee IDs
     dataRows.forEach(r => {
-      const unit = getAccountingUnit(r[3]);
+      const unit = getAccountingUnit(r);
       const empId = r[0];
       if (!unitMap.has(unit)) unitMap.set(unit, new Set());
       unitMap.get(unit).add(empId);
     });
 
-    // Keep a stable, meaningful order rather than alphabetical:
-    // Regional Office first, then the hospital units.
-    const preferredOrder = [DEFAULT_ACCOUNTING_UNIT, ...ACCOUNTING_UNIT_OVERRIDES];
-
     unitSummary = Array.from(unitMap.entries())
       .map(([unit, ids]) => ({ unit, count: ids.size }))
-      .sort((a, b) => preferredOrder.indexOf(a.unit) - preferredOrder.indexOf(b.unit));
+      .sort((a, b) => {
+        // Regional Office first, then alphabetical
+        if (a.unit === DEFAULT_ACCOUNTING_UNIT) return -1;
+        if (b.unit === DEFAULT_ACCOUNTING_UNIT) return 1;
+        return a.unit.localeCompare(b.unit);
+      });
 
     renderUnitCards(unitSummary);
   } catch (err) {

@@ -77,7 +77,13 @@ const DESIGNATION_GROUP = {
 
 const apiKey = "AIzaSyBLOOYaN0zUBPUkA0FyPot1QL-LFWCpEzc";
 const spreadsheetId = "1a4JmwnRPvVHOh5BNOZ-F_sqspasdcowRB7uF-qScd48";
-const employeeRange = "Employees2!A1:M";
+const employeeRange = "Employees2!A1:N";
+
+/* ================= COLUMN MAP (confirmed from sheet headers) =================
+   A EmpID(0)  B Name(1)  C Designation(2)  D Group(3)  E Branch(4)
+   F Accounting Unit(5)  G Gender(6)  H DoBirth(7)  I Retirement(8)
+   J DoJ(Branch)(9)  K DoJ(Accounting Unit)(10)  L DoJ(ESIC)(11)
+   M Contact Details(12)  N Date of Promotion of Current Post(13) */
 
 /* ================= DOM ================= */
 const select = document.getElementById("cadreSelect");
@@ -117,7 +123,7 @@ async function fetchData() {
 
     // Scope to the accounting unit chosen on the home page, if any
     if (selectedUnit) {
-      allData = allData.filter(r => getAccountingUnit(r[3]) === selectedUnit);
+      allData = allData.filter(r => getAccountingUnit(r) === selectedUnit);
 
       const titleEl = document.getElementById("pageTitle");
       const subtitleEl = document.getElementById("unitSubtitle");
@@ -234,7 +240,7 @@ function renderTables() {
           <td>${r[1] || "-"}</td>
           <td>${r[2] || "-"}</td>
           <td>${r[4] || "-"}</td>
-          <td>${r[8] || "-"}</td>
+          <td>${r[9] || "-"}</td>
         </tr>
       `;
     });
@@ -306,13 +312,16 @@ function showEmployeeModal(index) {
         <div class="detail-grid">
           <div class="label">Employee ID</div><div class="value">${e[0] || "-"}</div>
           <div class="label">Branch</div><div class="value">${e[4] || "-"}</div>
+          <div class="label">Accounting Unit</div><div class="value">${e[5] || "-"}</div>
           <div class="label">Group</div><div class="value">${e[3] || "-"}</div>
-          <div class="label">Gender</div><div class="value">${e[5] || "-"}</div>
-          <div class="label">Date of Birth</div><div class="value">${e[6] || "-"}</div>
-          <div class="label">Date of Joining (ESIC)</div><div class="value">${e[10] || "-"}</div>
-          <div class="label">Date of Joining in Current Cadre</div><div class="value">${e[12] || "-"}</div>
-          <div class="label">Date of Retirement</div><div class="value">${e[7] || "-"}</div>
-          <div class="label">Contact</div><div class="value">${e[11] || "-"}</div>
+          <div class="label">Gender</div><div class="value">${e[6] || "-"}</div>
+          <div class="label">Date of Birth</div><div class="value">${e[7] || "-"}</div>
+          <div class="label">Date of Joining (Branch)</div><div class="value">${e[9] || "-"}</div>
+          <div class="label">Date of Joining (Accounting Unit)</div><div class="value">${e[10] || "-"}</div>
+          <div class="label">Date of Joining (ESIC)</div><div class="value">${e[11] || "-"}</div>
+          <div class="label">Date of Promotion of Current Post</div><div class="value">${e[13] || "-"}</div>
+          <div class="label">Date of Retirement</div><div class="value">${e[8] || "-"}</div>
+          <div class="label">Contact Details</div><div class="value">${e[12] ? (e[12].includes("@") ? `<a href="mailto:${e[12]}">${e[12]}</a>` : e[12]) : "-"}</div>
         </div>
       </div>
     </div>

@@ -1,18 +1,13 @@
 /* =========================================================
-   ACCOUNTING UNIT MAPPING
-   There are only THREE accounting units. Most branches are
-   accounted under "Regional Office, Telangana". A couple of
-   branches (the hospitals) are their own accounting unit.
+   ACCOUNTING UNIT
+   The sheet has a dedicated "Accounting Unit" column (F),
+   separate from "Branch" (E). We read it directly rather
+   than guessing it from the branch name.
    ========================================================= */
-const ACCOUNTING_UNIT_OVERRIDES = new Set([
-  "ESIC MCH, Sanathnagar",
-  "ESIC SSH, Sanathnagar"
-]);
-
+const ACCOUNTING_UNIT_COLUMN_INDEX = 5; // column F
 const DEFAULT_ACCOUNTING_UNIT = "Regional Office, Telangana";
 
-function getAccountingUnit(branch) {
-  const b = (branch || "").trim();
-  if (ACCOUNTING_UNIT_OVERRIDES.has(b)) return b;
-  return DEFAULT_ACCOUNTING_UNIT;
+function getAccountingUnit(row) {
+  const val = (row[ACCOUNTING_UNIT_COLUMN_INDEX] || "").trim();
+  return val || DEFAULT_ACCOUNTING_UNIT;
 }
