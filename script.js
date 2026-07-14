@@ -77,7 +77,7 @@ const DESIGNATION_GROUP = {
 
 const apiKey = "AIzaSyBLOOYaN0zUBPUkA0FyPot1QL-LFWCpEzc";
 const spreadsheetId = "1a4JmwnRPvVHOh5BNOZ-F_sqspasdcowRB7uF-qScd48";
-const employeeRange = "Employees2!A1:M";
+const employeeRange = "Employees2!A1:N";
 
 /* ================= DOM ================= */
 const select = document.getElementById("cadreSelect");
