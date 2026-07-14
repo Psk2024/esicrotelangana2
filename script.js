@@ -77,7 +77,7 @@ const DESIGNATION_GROUP = {
 
 const apiKey = "AIzaSyBLOOYaN0zUBPUkA0FyPot1QL-LFWCpEzc";
 const spreadsheetId = "1a4JmwnRPvVHOh5BNOZ-F_sqspasdcowRB7uF-qScd48";
-const employeeRange = "Employees2!A1:N";
+const employeeRange = "Employees2!A1:M";
 
 /* ================= DOM ================= */
 const select = document.getElementById("cadreSelect");
@@ -117,7 +117,7 @@ async function fetchData() {
 
     // Scope to the accounting unit chosen on the home page, if any
     if (selectedUnit) {
-      allData = allData.filter(r => (r[3] || "Unknown") === selectedUnit);
+      allData = allData.filter(r => getAccountingUnit(r[3]) === selectedUnit);
 
       const titleEl = document.getElementById("pageTitle");
       const subtitleEl = document.getElementById("unitSubtitle");
