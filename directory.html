@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Directory</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header>
+  <a href="index.html" class="back-link" id="backLink">&larr; Back to Accounting Units</a>
+  <h1 id="pageTitle">List of Officers / Officials</h1>
+  <p id="unitSubtitle" class="unit-subtitle"></p>
+
+  <!-- Total Employees Card (Dashboard Toggle) -->
+  <div class="summary-cards">
+    <div class="card" id="totalCard" role="button" aria-label="Toggle designation dashboard">
+      <strong id="totalCount">0</strong>
+    </div>
+  </div>
+
+  <!-- Designation Dashboard (GLOBAL COUNTS) -->
+  <div id="designationDashboard" class="designation-dashboard"></div>
+</header>
+
+<main>
+
+  <!-- Filters -->
+  <section class="controls">
+    <select id="cadreSelect" aria-label="Filter by branch">
+      <option value="">All Branches</option>
+    </select>
+
+    <input
+      type="search"
+      id="searchInput"
+      placeholder="Search by ID, Name or Branch"
+      aria-label="Search employees"
+    >
+  </section>
+
+  <!-- Employee Tables -->
+  <section id="employeeTableContainer"></section>
+
+  <!-- Branch / Designation Summary -->
+  <div id="branchSummary"></div>
+
+</main>
+
+<!-- Employee Details Modal -->
+<div id="employeeModal" class="modal" aria-hidden="true">
+  <div class="modal-content" role="dialog" aria-modal="true">
+    <span class="close-btn" role="button" aria-label="Close">&times;</span>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="units.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
