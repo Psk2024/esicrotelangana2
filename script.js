@@ -104,6 +104,7 @@ let designationChart = null;
 /* ================= ACCOUNTING UNIT (from home page selection) ================= */
 const urlParams = new URLSearchParams(window.location.search);
 const selectedUnit = urlParams.get("unit") ? decodeURIComponent(urlParams.get("unit")) : "";
+const selectedEmpId = urlParams.get("emp") ? decodeURIComponent(urlParams.get("emp")) : "";
 
 /* ================= FETCH DATA ================= */
 async function fetchData() {
@@ -141,10 +142,18 @@ async function fetchData() {
 
     populateCadreOptions();
     filterAndDisplay();
+    openEmployeeFromSearch();
   } catch (err) {
     console.error(err);
     container.innerHTML = "<p>⚠ Unable to load data</p>";
   }
+}
+
+/* ================= AUTO-OPEN EMPLOYEE (from home page search) ================= */
+function openEmployeeFromSearch() {
+  if (!selectedEmpId) return;
+  const index = filteredData.findIndex(r => (r[0] || "") === selectedEmpId);
+  if (index !== -1) showEmployeeModal(index);
 }
 
 /* ================= DROPDOWN ================= */

@@ -15,10 +15,12 @@ const unitColors = [
 
 /* ================= DOM ================= */
 const unitCardsContainer = document.getElementById("unitCardsContainer");
+const employeeResultsContainer = document.getElementById("employeeResultsContainer");
 const unitSearchInput = document.getElementById("unitSearchInput");
 
 /* ================= STATE ================= */
-let unitSummary = []; // [{ unit, count }]
+let unitSummary = [];   // [{ unit, count }]
+let allEmployees = [];  // raw rows, kept for employee search
 
 /* ================= FETCH DATA ================= */
 async function fetchUnits() {
@@ -34,10 +36,10 @@ async function fetchUnits() {
       return;
     }
 
-    const dataRows = rows.slice(1);
+    allEmployees = rows.slice(1);
 
     const unitMap = new Map(); // accounting unit -> Set of employee IDs
-    dataRows.forEach(r => {
+    allEmployees.forEach(r => {
       const unit = getAccountingUnit(r);
       const empId = r[0];
       if (!unitMap.has(unit)) unitMap.set(unit, new Set());
@@ -60,7 +62,7 @@ async function fetchUnits() {
   }
 }
 
-/* ================= RENDER ================= */
+/* ================= RENDER: UNIT CARDS ================= */
 function renderUnitCards(units) {
   if (!units.length) {
     unitCardsContainer.innerHTML = "<p class='loading-text'>No accounting units found</p>";
@@ -103,11 +105,72 @@ function renderUnitCards(units) {
   unitCardsContainer.innerHTML = html;
 }
 
+/* ================= RENDER: EMPLOYEE SEARCH RESULTS ================= */
+function renderEmployeeResults(term) {
+  const matches = allEmployees.filter(r => {
+    const id = (r[0] || "").toLowerCase();
+    const name = (r[1] || "").toLowerCase();
+    const designation = (r[2] || "").toLowerCase();
+    return id.includes(term) || name.includes(term) || designation.includes(term);
+  });
+
+  if (!matches.length) {
+    employeeResultsContainer.innerHTML = `<p class="loading-text">No employees found for "${term}"</p>`;
+    return;
+  }
+
+  const MAX_RESULTS = 30;
+  const shown = matches.slice(0, MAX_RESULTS);
+
+  let html = shown
+    .map(r => {
+      const empId = r[0] || "";
+      const name = r[1] || "-";
+      const designation = r[2] || "-";
+      const branch = r[4] || "-";
+      const unit = getAccountingUnit(r);
+      const initials = name
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(w => w[0])
+        .join("")
+        .toUpperCase();
+
+      return `
+        <a class="employee-result-card" href="directory.html?unit=${encodeURIComponent(unit)}&emp=${encodeURIComponent(empId)}">
+          <div class="employee-result-icon">${initials || "?"}</div>
+          <div class="employee-result-body">
+            <div class="employee-result-name">${name}</div>
+            <div class="employee-result-meta">${designation} &middot; ${branch}</div>
+            <div class="employee-result-unit">${unit}</div>
+          </div>
+        </a>
+      `;
+    })
+    .join("");
+
+  if (matches.length > MAX_RESULTS) {
+    html += `<p class="loading-text">Showing first ${MAX_RESULTS} of ${matches.length} matches — refine your search for more.</p>`;
+  }
+
+  employeeResultsContainer.innerHTML = html;
+}
+
 /* ================= SEARCH ================= */
 unitSearchInput.addEventListener("input", () => {
   const term = unitSearchInput.value.trim().toLowerCase();
-  const filtered = unitSummary.filter(u => u.unit.toLowerCase().includes(term));
-  renderUnitCards(filtered);
+
+  if (!term) {
+    employeeResultsContainer.innerHTML = "";
+    employeeResultsContainer.classList.remove("active");
+    unitCardsContainer.classList.remove("hidden");
+    return;
+  }
+
+  unitCardsContainer.classList.add("hidden");
+  employeeResultsContainer.classList.add("active");
+  renderEmployeeResults(term);
 });
 
 /* ================= INIT ================= */

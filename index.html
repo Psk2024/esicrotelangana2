@@ -21,12 +21,15 @@
     <input
       type="search"
       id="unitSearchInput"
-      placeholder="Search accounting unit"
-      aria-label="Search accounting units"
+      placeholder="Search employee by name, ID or designation"
+      aria-label="Search employees"
     >
   </section>
 
-  <!-- Unit Cards -->
+  <!-- Employee search results (shown while searching) -->
+  <section id="employeeResultsContainer" class="employee-results-container"></section>
+
+  <!-- Unit Cards (shown when not searching) -->
   <section id="unitCardsContainer" class="unit-cards-container">
     <p class="loading-text">Loading accounting units...</p>
   </section>
