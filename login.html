@@ -119,13 +119,7 @@
       await auth.signInWithEmailAndPassword(email, password);
       // onAuthStateChanged above handles the redirect.
     } catch (err) {
-      console.error("Firebase sign-in error:", err.code, err.message);
-      // TEMPORARY: showing the real error code/message to help
-      // diagnose setup issues. Revert to the generic message
-      // below once sign-in is working reliably, so we're not
-      // leaking auth internals to end users long-term.
-      errorEl.textContent = `Sign in failed: ${err.code || "unknown"} - ${err.message || ""}`;
-      // errorEl.textContent = "Sign in failed. Check your email and password and try again.";
+      errorEl.textContent = "Sign in failed. Check your email and password and try again.";
       btn.disabled = false;
       btn.textContent = "Sign In";
     }
