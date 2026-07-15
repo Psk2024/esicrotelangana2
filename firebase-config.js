@@ -16,11 +16,6 @@
       There's no self-signup on this site by design - you add
       users manually from the console.
    ========================================================= */
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAXxdwHjjqC5tEGrBfdqVO3v8D4zxz0a50",
@@ -30,6 +25,3 @@ const firebaseConfig = {
   messagingSenderId: "352337506117",
   appId: "1:352337506117:web:2a5e98cf65fdd7e5f8d82c"
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
