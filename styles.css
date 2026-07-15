@@ -6,6 +6,30 @@
    ========================================================= */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
 
+/* =========================================================
+   AUTH GUARD VISIBILITY
+   <html> starts with class="auth-checking" (set directly in the
+   HTML) so the page is hidden from first paint. auth-guard.js
+   swaps it to "auth-ready" once sign-in is confirmed, or
+   redirects to login.html if not signed in. This keeps
+   employee data off-screen instead of flashing it briefly.
+   ========================================================= */
+html.auth-checking body { visibility: hidden; }
+html.auth-ready body { visibility: visible; }
+
+.sign-out-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: .8rem;
+  cursor: pointer;
+}
+.sign-out-btn:hover { background: rgba(255,255,255,.12); }
+
 :root {
   /* Brand */
   --primary: #0b3c5d;

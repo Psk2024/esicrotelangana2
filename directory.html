@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="auth-checking">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +13,7 @@
   <a href="index.html" class="back-link" id="backLink">&larr; Back to Accounting Units</a>
   <h1 id="pageTitle">List of Officers / Officials</h1>
   <p id="unitSubtitle" class="unit-subtitle"></p>
+  <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
 
   <!-- Total Employees Card (Dashboard Toggle) -->
   <div class="summary-cards">
@@ -58,6 +59,10 @@
 </div>
 
 <!-- Scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="auth-guard.js"></script>
 <script src="config.js"></script>
 <script src="units.js"></script>
 <script src="script.js"></script>

@@ -465,5 +465,8 @@ totalCard.addEventListener("click", () => {
     dashboard.style.display = "none";   // hide
   }
 });
-/* ================= INIT ================= */
-fetchData();
+/* ================= INIT =================
+   Wait for auth-guard.js to confirm sign-in before hitting
+   the Sheets API - no point fetching data for a page that's
+   about to redirect to login. */
+document.addEventListener("authReady", fetchData);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="auth-checking">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +13,7 @@
   <img src="esic2.png" alt="ESIC Logo" class="home-logo">
   <h1>ESIC Regional Office, Telangana</h1>
   <p class="home-tagline">Select an Accounting Unit to view its Employee Directory</p>
+  <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
 </header>
 
 <main>
@@ -39,6 +40,10 @@
   <p>ESIC Regional Office, Telangana</p>
 </footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="auth-guard.js"></script>
 <script src="config.js"></script>
 <script src="units.js"></script>
 <script src="home.js"></script>

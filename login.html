@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - ESIC Regional Office, Telangana</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px 28px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.08);
+      text-align: center;
+    }
+    .login-card img { width: 56px; margin-bottom: 12px; }
+    .login-card h1 { font-size: 1.1rem; margin: 0 0 4px; }
+    .login-card p.sub { color: #666; font-size: .85rem; margin: 0 0 20px; }
+    .login-field {
+      text-align: left;
+      margin-bottom: 14px;
+    }
+    .login-field label {
+      display: block;
+      font-size: .8rem;
+      color: #444;
+      margin-bottom: 4px;
+    }
+    .login-field input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: .95rem;
+      box-sizing: border-box;
+    }
+    .login-submit {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 8px;
+      background: var(--primary, DodgerBlue);
+      color: #fff;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .login-submit:disabled { opacity: .6; cursor: default; }
+    .login-error {
+      color: #c62828;
+      font-size: .85rem;
+      margin: 10px 0 0;
+      min-height: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <img src="esic2.png" alt="ESIC Logo">
+    <h1>ESIC Regional Office, Telangana</h1>
+    <p class="sub">Sign in to view the employee directory</p>
+
+    <form id="loginForm" autocomplete="on">
+      <div class="login-field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="username">
+      </div>
+      <div class="login-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="login-submit" id="loginBtn">Sign In</button>
+      <p class="login-error" id="loginError"></p>
+    </form>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // If already signed in, skip straight to the app.
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      const redirectTo = new URLSearchParams(window.location.search).get("redirect") || "index.html";
+      window.location.replace(redirectTo);
+    }
+  });
+
+  const form = document.getElementById("loginForm");
+  const errorEl = document.getElementById("loginError");
+  const btn = document.getElementById("loginBtn");
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    errorEl.textContent = "";
+    btn.disabled = true;
+    btn.textContent = "Signing in...";
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      // onAuthStateChanged above handles the redirect.
+    } catch (err) {
+      errorEl.textContent = "Sign in failed. Check your email and password and try again.";
+      btn.disabled = false;
+      btn.textContent = "Sign In";
+    }
+  });
+</script>
+
+</body>
+</html>
