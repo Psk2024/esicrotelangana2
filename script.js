@@ -75,15 +75,9 @@ const DESIGNATION_GROUP = {
   "Asst. Executive Engineer (Civil)": "A"
 };
 
-const apiKey = "AIzaSyBLOOYaN0zUBPUkA0FyPot1QL-LFWCpEzc";
-const spreadsheetId = "1a4JmwnRPvVHOh5BNOZ-F_sqspasdcowRB7uF-qScd48";
-const employeeRange = "Employees2!A1:N";
-
-/* ================= COLUMN MAP (confirmed from sheet headers) =================
-   A EmpID(0)  B Name(1)  C Designation(2)  D Group(3)  E Branch(4)
-   F Accounting Unit(5)  G Gender(6)  H DoBirth(7)  I Retirement(8)
-   J DoJ(Branch)(9)  K DoJ(Accounting Unit)(10)  L DoJ(ESIC)(11)
-   M Contact Details(12)  N Date of Promotion of Current Post(13) */
+/* apiKey / spreadsheetId / employeeRange and the COLUMNS map
+   now live in config.js (shared with home.js) so they're
+   defined in exactly one place. */
 
 /* ================= DOM ================= */
 const select = document.getElementById("cadreSelect");
@@ -99,7 +93,6 @@ const closeBtn = document.querySelector(".close-btn");
 /* ================= STATE ================= */
 let allData = [];
 let filteredData = [];
-let designationChart = null;
 
 /* ================= ACCOUNTING UNIT (from home page selection) ================= */
 const urlParams = new URLSearchParams(window.location.search);
@@ -110,7 +103,7 @@ const selectedEmpId = urlParams.get("emp") ? decodeURIComponent(urlParams.get("e
 async function fetchData() {
   try {
     const res = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${employeeRange}?key=${apiKey}`
+      `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${CONFIG.employeeRange}?key=${CONFIG.apiKey}`
     );
     const json = await res.json();
     const rows = json.values || [];
@@ -138,7 +131,7 @@ async function fetchData() {
 
     filteredData = [...allData];
 
-    totalCountEl.textContent = new Set(allData.map(r => r[0])).size;
+    totalCountEl.textContent = new Set(allData.map(r => r[COLUMNS.EMP_ID])).size;
 
     populateCadreOptions();
     filterAndDisplay();
@@ -152,13 +145,13 @@ async function fetchData() {
 /* ================= AUTO-OPEN EMPLOYEE (from home page search) ================= */
 function openEmployeeFromSearch() {
   if (!selectedEmpId) return;
-  const index = filteredData.findIndex(r => (r[0] || "") === selectedEmpId);
+  const index = filteredData.findIndex(r => (r[COLUMNS.EMP_ID] || "") === selectedEmpId);
   if (index !== -1) showEmployeeModal(index);
 }
 
 /* ================= DROPDOWN ================= */
 function populateCadreOptions() {
-  const cadres = [...new Set(allData.map(r => r[4]).filter(Boolean))].sort();
+  const cadres = [...new Set(allData.map(r => r[COLUMNS.BRANCH]).filter(Boolean))].sort();
   select.innerHTML = `<option value="">All Branches</option>`;
 
   cadres.forEach(c => {
@@ -179,12 +172,12 @@ function filterAndDisplay() {
   const term = searchInput.value.trim().toLowerCase();
 
   filteredData = allData.filter(r => {
-    const matchCadre = cadre ? r[4] === cadre : true;
+    const matchCadre = cadre ? r[COLUMNS.BRANCH] === cadre : true;
     const matchSearch =
       !term ||
-      r[0]?.toLowerCase().includes(term) ||
-      r[1]?.toLowerCase().includes(term) ||
-      r[4]?.toLowerCase().includes(term);
+      r[COLUMNS.EMP_ID]?.toLowerCase().includes(term) ||
+      r[COLUMNS.NAME]?.toLowerCase().includes(term) ||
+      r[COLUMNS.BRANCH]?.toLowerCase().includes(term);
 
     return matchCadre && matchSearch;
   });
@@ -209,7 +202,7 @@ function renderTables() {
 
   const grouped = {};
   filteredData.forEach((r, i) => {
-    const place = r[3] || "Unknown";
+    const place = r[COLUMNS.GROUP] || "Unknown";
     grouped[place] ??= [];
     grouped[place].push({ row: r, index: i });
   });
@@ -218,13 +211,13 @@ function renderTables() {
   let colorIndex = 0;
 
   for (const [place, list] of Object.entries(grouped)) {
-    const count = new Set(list.map(o => o.row[0])).size;
+    const count = new Set(list.map(o => o.row[COLUMNS.EMP_ID])).size;
     const color = headerColors[colorIndex++ % headerColors.length];
 
     html += `
       <div class="place-section">
         <h2 style="color:${color}">
-          ${place}
+          ${escapeHtml(place)}
           <span style="font-size:.75em;color:#666">(${count})</span>
         </h2>
 
@@ -245,11 +238,11 @@ function renderTables() {
       const r = o.row;
       html += `
         <tr class="clickable-row" data-index="${o.index}">
-          <td>${r[0] || "-"}</td>
-          <td>${r[1] || "-"}</td>
-          <td>${r[2] || "-"}</td>
-          <td>${r[4] || "-"}</td>
-          <td>${r[9] || "-"}</td>
+          <td>${escapeHtml(r[COLUMNS.EMP_ID]) || "-"}</td>
+          <td>${escapeHtml(r[COLUMNS.NAME]) || "-"}</td>
+          <td>${escapeHtml(r[COLUMNS.DESIGNATION]) || "-"}</td>
+          <td>${escapeHtml(r[COLUMNS.BRANCH]) || "-"}</td>
+          <td>${escapeHtml(r[COLUMNS.DOJ_BRANCH]) || "-"}</td>
         </tr>
       `;
     });
@@ -277,8 +270,8 @@ function renderBranchSummary() {
   const ids = new Set();
 
   filteredData.forEach(r => {
-    counts[r[2]] = (counts[r[2]] || 0) + 1;
-    ids.add(r[0]);
+    counts[r[COLUMNS.DESIGNATION]] = (counts[r[COLUMNS.DESIGNATION]] || 0) + 1;
+    ids.add(r[COLUMNS.EMP_ID]);
   });
 
   branchSummaryEl.innerHTML = `
@@ -288,7 +281,7 @@ function renderBranchSummary() {
         ${Object.entries(counts)
           .map(
             ([d, c]) =>
-              `<div class="summary-pill">${d}<span>${c}</span></div>`
+              `<div class="summary-pill">${escapeHtml(d)}<span>${c}</span></div>`
           )
           .join("")}
       </div>
@@ -304,19 +297,22 @@ function showEmployeeModal(index) {
   const e = filteredData[index];
   if (!e) return;
 
-  const imageUrl = e[0] ? `images/${e[0]}.jpg` : "images/default.png";
-  const contact = e[12] || "";
+  const empId = e[COLUMNS.EMP_ID] || "";
+  const imageUrl = empId ? `images/${encodeURIComponent(empId)}.jpg` : "images/default.png";
+  const contact = e[COLUMNS.CONTACT] || "";
   const contactHtml = contact
-    ? (contact.includes("@") ? `<a href="mailto:${contact}">${contact}</a>` : contact)
+    ? (contact.includes("@")
+        ? `<a href="mailto:${encodeURIComponent(contact)}">${escapeHtml(contact)}</a>`
+        : escapeHtml(contact))
     : "-";
 
   modalBody.innerHTML = `
     <div class="emp-modal-header">
       <div class="emp-modal-title">
-        <h3>${e[1] || "-"}</h3>
-        ${e[3] ? `<span class="emp-group-badge">${e[3]}</span>` : ""}
+        <h3>${escapeHtml(e[COLUMNS.NAME]) || "-"}</h3>
+        ${e[COLUMNS.GROUP] ? `<span class="emp-group-badge">${escapeHtml(e[COLUMNS.GROUP])}</span>` : ""}
       </div>
-      <p>${e[2] || "-"}</p>
+      <p>${escapeHtml(e[COLUMNS.DESIGNATION]) || "-"}</p>
     </div>
 
     <div class="emp-modal-body">
@@ -324,28 +320,28 @@ function showEmployeeModal(index) {
         <div class="emp-photo">
           <img src="${imageUrl}" onerror="this.src='images/default.png'">
         </div>
-        <div class="emp-id-chip">ID ${e[0] || "-"}</div>
+        <div class="emp-id-chip">ID ${escapeHtml(empId) || "-"}</div>
       </div>
 
       <div class="emp-details">
         <div class="detail-section">
           <div class="detail-section-title">Posting</div>
           <div class="detail-grid">
-            <div class="label">Branch</div><div class="value">${e[4] || "-"}</div>
-            <div class="label">Accounting Unit</div><div class="value">${e[5] || "-"}</div>
-            <div class="label">Gender</div><div class="value">${e[6] || "-"}</div>
-            <div class="label">Date of Birth</div><div class="value">${e[7] || "-"}</div>
+            <div class="label">Branch</div><div class="value">${escapeHtml(e[COLUMNS.BRANCH]) || "-"}</div>
+            <div class="label">Accounting Unit</div><div class="value">${escapeHtml(e[COLUMNS.ACCOUNTING_UNIT]) || "-"}</div>
+            <div class="label">Gender</div><div class="value">${escapeHtml(e[COLUMNS.GENDER]) || "-"}</div>
+            <div class="label">Date of Birth</div><div class="value">${escapeHtml(e[COLUMNS.DOB]) || "-"}</div>
           </div>
         </div>
 
         <div class="detail-section">
           <div class="detail-section-title">Service Record</div>
           <div class="detail-grid">
-            <div class="label">Date of Joining (Branch)</div><div class="value">${e[9] || "-"}</div>
-            <div class="label">Date of Joining (Accounting Unit)</div><div class="value">${e[10] || "-"}</div>
-            <div class="label">Date of Joining (ESIC)</div><div class="value">${e[11] || "-"}</div>
-            <div class="label">Date of Promotion of Current Post</div><div class="value">${e[13] || "-"}</div>
-            <div class="label">Date of Retirement</div><div class="value">${e[8] || "-"}</div>
+            <div class="label">Date of Joining (Branch)</div><div class="value">${escapeHtml(e[COLUMNS.DOJ_BRANCH]) || "-"}</div>
+            <div class="label">Date of Joining (Accounting Unit)</div><div class="value">${escapeHtml(e[COLUMNS.DOJ_ACCOUNTING_UNIT]) || "-"}</div>
+            <div class="label">Date of Joining (ESIC)</div><div class="value">${escapeHtml(e[COLUMNS.DOJ_ESIC]) || "-"}</div>
+            <div class="label">Date of Promotion of Current Post</div><div class="value">${escapeHtml(e[COLUMNS.DATE_OF_PROMOTION]) || "-"}</div>
+            <div class="label">Date of Retirement</div><div class="value">${escapeHtml(e[COLUMNS.RETIREMENT]) || "-"}</div>
           </div>
         </div>
 
@@ -372,8 +368,8 @@ function renderDesignationDashboard() {
   const designationMap = new Map();
 
   allData.forEach(r => {
-    const empId = r[0];
-    const designation = normalizeDesignation(r[2]);
+    const empId = r[COLUMNS.EMP_ID];
+    const designation = normalizeDesignation(r[COLUMNS.DESIGNATION]);
 
     if (!designationMap.has(designation)) {
       designationMap.set(designation, new Set());
@@ -385,8 +381,8 @@ function renderDesignationDashboard() {
   dashboard.innerHTML = Array.from(designationMap.entries())
     .map(([designation, empSet]) => `
       <div class="designation-card ${activeDesignation === designation ? "active" : ""}"
-           onclick="toggleDesignationFilter('${designation}')">
-        <div class="designation-name">${designation}</div>
+           onclick="toggleDesignationFilter('${escapeHtml(designation).replace(/'/g, "\\'")}')">
+        <div class="designation-name">${escapeHtml(designation)}</div>
         <div class="designation-count">${empSet.size}</div>
       </div>
     `)
@@ -420,16 +416,16 @@ function toggleDesignationFilter(designation) {
 
   filteredData = allData.filter(r => {
     const matchDesignation = activeDesignation
-      ? normalizeDesignation(r[2]) === activeDesignation
+      ? normalizeDesignation(r[COLUMNS.DESIGNATION]) === activeDesignation
       : true;
 
-    const matchCadre = cadre ? r[4] === cadre : true;
+    const matchCadre = cadre ? r[COLUMNS.BRANCH] === cadre : true;
 
     const matchSearch =
       !term ||
-      r[0]?.toLowerCase().includes(term) ||
-      r[1]?.toLowerCase().includes(term) ||
-      r[4]?.toLowerCase().includes(term);
+      r[COLUMNS.EMP_ID]?.toLowerCase().includes(term) ||
+      r[COLUMNS.NAME]?.toLowerCase().includes(term) ||
+      r[COLUMNS.BRANCH]?.toLowerCase().includes(term);
 
     return matchDesignation && matchCadre && matchSearch;
   });

@@ -1,8 +1,7 @@
-/* ================= CONFIG ================= */
-const apiKey = "AIzaSyBLOOYaN0zUBPUkA0FyPot1QL-LFWCpEzc";
-const spreadsheetId = "1a4JmwnRPvVHOh5BNOZ-F_sqspasdcowRB7uF-qScd48";
-const employeeRange = "Employees2!A1:N";
-
+/* ================= CONFIG =================
+   apiKey / spreadsheetId / employeeRange now live in
+   config.js (shared with script.js) so they're defined
+   in exactly one place. */
 const unitColors = [
   "Tomato",
   "DodgerBlue",
@@ -26,7 +25,7 @@ let allEmployees = [];  // raw rows, kept for employee search
 async function fetchUnits() {
   try {
     const res = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${employeeRange}?key=${apiKey}`
+      `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${CONFIG.employeeRange}?key=${CONFIG.apiKey}`
     );
     const json = await res.json();
     const rows = json.values || [];
@@ -41,7 +40,7 @@ async function fetchUnits() {
     const unitMap = new Map(); // accounting unit -> Set of employee IDs
     allEmployees.forEach(r => {
       const unit = getAccountingUnit(r);
-      const empId = r[0];
+      const empId = r[COLUMNS.EMP_ID];
       if (!unitMap.has(unit)) unitMap.set(unit, new Set());
       unitMap.get(unit).add(empId);
     });
@@ -78,7 +77,6 @@ function renderUnitCards(units) {
         <div class="unit-card-name">All Accounting Units</div>
         <div class="unit-card-count">${totalEmployees} Employees</div>
       </div>
-      </br>
     </a>
   `;
 
@@ -94,9 +92,9 @@ function renderUnitCards(units) {
 
     html += `
       <a class="unit-card" href="directory.html?unit=${encodeURIComponent(u.unit)}">
-        <div class="unit-card-icon" style="background:${color}">${initials}</div>
+        <div class="unit-card-icon" style="background:${color}">${escapeHtml(initials)}</div>
         <div class="unit-card-body">
-          <div class="unit-card-name">${u.unit}</div>
+          <div class="unit-card-name">${escapeHtml(u.unit)}</div>
           <div class="unit-card-count">${u.count} Employee${u.count === 1 ? "" : "s"}</div>
         </div>
       </a>
@@ -109,9 +107,9 @@ function renderUnitCards(units) {
 /* ================= RENDER: EMPLOYEE SEARCH RESULTS ================= */
 function renderEmployeeResults(term) {
   const matches = allEmployees.filter(r => {
-    const id = (r[0] || "").toLowerCase();
-    const name = (r[1] || "").toLowerCase();
-    const designation = (r[2] || "").toLowerCase();
+    const id = (r[COLUMNS.EMP_ID] || "").toLowerCase();
+    const name = (r[COLUMNS.NAME] || "").toLowerCase();
+    const designation = (r[COLUMNS.DESIGNATION] || "").toLowerCase();
     return id.includes(term) || name.includes(term) || designation.includes(term);
   });
 
@@ -125,10 +123,10 @@ function renderEmployeeResults(term) {
 
   let html = shown
     .map(r => {
-      const empId = r[0] || "";
-      const name = r[1] || "-";
-      const designation = r[2] || "-";
-      const branch = r[4] || "-";
+      const empId = r[COLUMNS.EMP_ID] || "";
+      const name = r[COLUMNS.NAME] || "-";
+      const designation = r[COLUMNS.DESIGNATION] || "-";
+      const branch = r[COLUMNS.BRANCH] || "-";
       const unit = getAccountingUnit(r);
       const initials = name
         .split(/\s+/)
@@ -140,11 +138,11 @@ function renderEmployeeResults(term) {
 
       return `
         <a class="employee-result-card" href="directory.html?unit=${encodeURIComponent(unit)}&emp=${encodeURIComponent(empId)}">
-          <div class="employee-result-icon">${initials || "?"}</div>
+          <div class="employee-result-icon">${escapeHtml(initials) || "?"}</div>
           <div class="employee-result-body">
-            <div class="employee-result-name">${name}</div>
-            <div class="employee-result-meta">${designation} &middot; ${branch}</div>
-            <div class="employee-result-unit">${unit}</div>
+            <div class="employee-result-name">${escapeHtml(name)}</div>
+            <div class="employee-result-meta">${escapeHtml(designation)} &middot; ${escapeHtml(branch)}</div>
+            <div class="employee-result-unit">${escapeHtml(unit)}</div>
           </div>
         </a>
       `;
