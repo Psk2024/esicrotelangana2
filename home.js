@@ -3,13 +3,13 @@
    config.js (shared with script.js) so they're defined
    in exactly one place. */
 const unitColors = [
-  "Tomato",
-  "DodgerBlue",
-  "SlateBlue",
-  "#8e24aa",
-  "#2e7d32",
-  "#c2410c",
-  "#0f766e"
+  "var(--secondary)",
+  "var(--accent-dark)",
+  "#0f766e",
+  "#6d28d9",
+  "#0b3c5d",
+  "#b45309",
+  "#1d4ed8"
 ];
 
 /* ================= DOM ================= */

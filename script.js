@@ -1,10 +1,10 @@
 /* ================= CONFIG ================= */
 const headerColors = [
-  "Tomato",
-  "DodgerBlue",
-  "SlateBlue",
-  "#8e24aa",
-  "#2e7d32"
+  "var(--primary)",
+  "var(--secondary)",
+  "var(--accent-dark)",
+  "#0f766e",
+  "#6d28d9"
 ];
 const DESIGNATION_ALIAS = {
   /* Social Security Officer group */
@@ -194,8 +194,9 @@ function filterAndDisplay() {
 function renderTables() {
   if (!filteredData.length) {
     container.innerHTML = `
-      <div style="padding:40px;background:#fff;border-radius:16px">
-        🔍 No employees found
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <p>No employees found</p>
       </div>`;
     return;
   }
@@ -218,7 +219,7 @@ function renderTables() {
       <div class="place-section">
         <h2 style="color:${color}">
           ${escapeHtml(place)}
-          <span style="font-size:.75em;color:#666">(${count})</span>
+          <span class="place-count">(${count})</span>
         </h2>
 
         <table class="employee-table">
